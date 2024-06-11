@@ -7,30 +7,25 @@
 
 using namespace std;
 
-// Enum untuk ukuran kue
 enum CakeSize {
     Kecil,
     Besar
 };
 
-// Struktur untuk mewakili kue
 struct Cake {
     string name;  
     string flavor;  
     CakeSize size;
     double price;
 
-    // Constructor untuk Cake
     Cake(string n, string f, CakeSize s, double p) : name(n), flavor(f), size(s), price(p) {}
 };
 
-// Struktur untuk mewakili akun pelanggan
 struct Account {
     string username; 
     string password; 
 };
 
-// Fungsi untuk membersihkan layar
 void clearScreen() {
     #if defined(_WIN32)
         system("cls");
@@ -39,7 +34,6 @@ void clearScreen() {
     #endif
 }
 
-// Fungsi untuk registrasi akun pelanggan
 void registerAccount(map<string, Account>& accounts) { 
     clearScreen();
     string username, password;
@@ -59,7 +53,6 @@ void registerAccount(map<string, Account>& accounts) {
     clearScreen();
 }
 
-// Fungsi untuk login akun pelanggan
 bool login(map<string, Account>& accounts, string& username) { 
     clearScreen();
     string password;
@@ -89,7 +82,6 @@ bool login(map<string, Account>& accounts, string& username) {
     
 }
 
-// Fungsi untuk menampilkan katalog kue
 void showCakeCatalog(const vector<Cake>& cakes) { 
     clearScreen();
 	cout << "\n\n\n\n";
@@ -110,7 +102,6 @@ void showCakeCatalog(const vector<Cake>& cakes) {
     cin.get();
 }
 
-// Fungsi untuk menampilkan struk pembelian
 void showReceipt(const list<Cake>& cakes) { 
     clearScreen();
     cout << "\n\n\n\n";
@@ -127,6 +118,7 @@ void showReceipt(const list<Cake>& cakes) {
         cout << "	Rasa : " << cake.flavor << endl;
         cout << "	Ukuran : " << (cake.size == Kecil ? "Kecil" : "Besar") << endl;
         cout << "	Harga : Rp" << cake.price << endl;
+        cout << endl;
         total += cake.price;
     }
     cout << "	Total : Rp" << total << endl << endl;
@@ -136,7 +128,6 @@ void showReceipt(const list<Cake>& cakes) {
     cin.get();  
 }
 
-// Fungsi untuk memproses pemesanan
 void processOrder(vector<Cake>& cakes, list<Cake>& orderList) { 
     clearScreen();
     cout << "\n\n\n\n";
@@ -212,7 +203,6 @@ void processOrder(vector<Cake>& cakes, list<Cake>& orderList) {
     clearScreen();
 }
 
-// Fungsi untuk menampilkan menu utama
 void showMainMenu() {
 	
 	cout << "\n\n\n\n";
@@ -265,3 +255,60 @@ int main() {
     list<Cake> orderList;
 
     clearScreen();
+
+    int choice;
+    bool running = true;
+    while (running) {
+        showMainMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                registerAccount(accounts);
+                break;
+            case 2: {
+                string username;
+                if (login(accounts, username)) {
+                    int subChoice;
+                    bool loggedIn = true;
+                    while (loggedIn) {
+                        showLoginMenu();
+                        cin >> subChoice;
+                        switch (subChoice) {
+                            case 1:
+                                showCakeCatalog(cakes);
+                                break;
+                            case 2:
+                                processOrder(cakes, orderList);
+                                break;
+                            case 3:
+                                showReceipt(orderList);
+                                break;
+                            case 4:
+                            	clearScreen();
+                                loggedIn = false;
+                                break;
+                            default:
+                                cout << "	Pilihan tidak tersedia." << endl;
+                        }
+                    }
+                }
+                break;
+            }
+            case 3:
+                showCakeCatalog(cakes);
+                break;
+            case 4:
+                processOrder(cakes, orderList);
+                break;
+            case 5:
+                clearScreen();
+                running = false;
+                break;
+            default:
+                cout << "	Pilihan tidak tersedia." << endl;
+        }
+    }
+
+    return 0;
+}
